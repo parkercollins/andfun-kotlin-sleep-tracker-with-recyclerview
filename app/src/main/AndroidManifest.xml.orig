@@ -10,7 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity"
+<<<<<<< HEAD
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden" android:exported="true">
+=======
                 android:exported="true">
+>>>>>>> Step.14-Solution-Add-Header-to-GridLayout
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -22,11 +22,19 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs'
 
 android {
+<<<<<<< HEAD
+    compileSdkVersion 31
+=======
     compileSdkVersion 34
+>>>>>>> Step.14-Solution-Add-Header-to-GridLayout
     defaultConfig {
         applicationId "com.example.android.trackmysleepquality"
         minSdkVersion 19
+<<<<<<< HEAD
+        targetSdkVersion 31
+=======
         targetSdkVersion 34
+>>>>>>> Step.14-Solution-Add-Header-to-GridLayout
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -67,9 +75,17 @@ dependencies {
 
     // Room and Lifecycle dependencies
     implementation "androidx.room:room-runtime:$version_room"
+    annotationProcessor "androidx.room:room-compiler:$version_room"
+    // To use Kotlin annotation processing tool (kapt)
     kapt "androidx.room:room-compiler:$version_room"
     // The APIs in lifecycle-extensions have been deprecated. Instead, add dependencies for the specific Lifecycle artifacts you need.
     // implementation "androidx.lifecycle:lifecycle-extensions:$version_lifecycle_extensions"
+
+    // ViewModel and LiveData
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$version_lifecycle"
+
+    // Kotlin Extensions and Coroutines support for Room
+    implementation "androidx.room:room-ktx:$version_room"
 
     // Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version_coroutine"
@@ -78,6 +94,13 @@ dependencies {
     // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$version_navigation"
     implementation "androidx.navigation:navigation-ui-ktx:$version_navigation"
+<<<<<<< HEAD
+
+    // Testing
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+=======
 
     // ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$version_lifecycle"
@@ -90,5 +113,6 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+>>>>>>> Step.14-Solution-Add-Header-to-GridLayout
 }
 

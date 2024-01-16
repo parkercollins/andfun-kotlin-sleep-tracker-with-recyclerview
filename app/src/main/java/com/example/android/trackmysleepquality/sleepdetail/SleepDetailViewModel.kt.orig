@@ -37,11 +37,21 @@ class SleepDetailViewModel(
      * Hold a reference to SleepDatabase via its SleepDatabaseDao.
      */
     val database = dataSource
+<<<<<<< HEAD
+    /*
+    /** Coroutine setup variables */
+=======
 
+>>>>>>> Step.14-Solution-Add-Header-to-GridLayout
 
     /**
      */
+<<<<<<< HEAD
+    private val viewModelJob = Job()
+    */
+=======
 
+>>>>>>> Step.14-Solution-Add-Header-to-GridLayout
     private val night = MediatorLiveData<SleepNight>()
 
     fun getNight() = night
@@ -63,11 +73,19 @@ class SleepDetailViewModel(
      */
     val navigateToSleepTracker: LiveData<Boolean?>
         get() = _navigateToSleepTracker
-
+    /*
     /**
      *
      */
+<<<<<<< HEAD
+    override fun onCleared() {
+        super.onCleared()
+        viewModelJob.cancel()
+    }
+    */
+=======
 
+>>>>>>> Step.14-Solution-Add-Header-to-GridLayout
 
     /**
      * Call this immediately after navigating to [SleepTrackerFragment]

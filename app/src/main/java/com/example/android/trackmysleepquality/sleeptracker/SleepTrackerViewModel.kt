@@ -17,10 +17,11 @@
 package com.example.android.trackmysleepquality.sleeptracker
 
 import android.app.Application
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import com.example.android.trackmysleepquality.database.SleepDatabaseDao
 import com.example.android.trackmysleepquality.database.SleepNight
 import com.example.android.trackmysleepquality.formatNights
@@ -31,8 +32,8 @@ import androidx.lifecycle.viewModelScope
  * ViewModel for SleepTrackerFragment.
  */
 class SleepTrackerViewModel(
-        val database: SleepDatabaseDao,
-        application: Application) : AndroidViewModel(application) {
+    val database: SleepDatabaseDao,
+    application: Application) : AndroidViewModel(application) {
 
     /**
      * viewModelJob allows us to cancel all coroutines started by this ViewModel.
@@ -60,29 +61,29 @@ class SleepTrackerViewModel(
     /**
      * Converted nights to Spanned for displaying.
      */
-    val nightsString = Transformations.map(nights) { nights ->
+    val nightsString = nights.map { nights ->
         formatNights(nights, application.resources)
     }
 
     /**
      * If tonight has not been set, then the START button should be visible.
      */
-    val startButtonVisible = Transformations.map(tonight) {
+    val startButtonVisible = tonight.map {
         null == it
     }
 
     /**
      * If tonight has been set, then the STOP button should be visible.
      */
-    val stopButtonVisible = Transformations.map(tonight) {
+    val stopButtonVisible = tonight.map {
         null != it
     }
 
     /**
      * If there are any nights in the database, show the CLEAR button.
      */
-    val clearButtonVisible = Transformations.map(nights) {
-        it?.isNotEmpty()
+    val clearButtonVisible = nights.map {
+        it.isNotEmpty()
     }
 
     /**
@@ -104,7 +105,7 @@ class SleepTrackerViewModel(
      * This is private because we don't want to expose setting this value to the Fragment.
      */
 
-    private val _navigateToSleepQuality = MutableLiveData<SleepNight>()
+    private val _navigateToSleepQuality = MutableLiveData<SleepNight?>()
     /**
      * Call this immediately after calling `show()` on a toast.
      *
@@ -115,11 +116,10 @@ class SleepTrackerViewModel(
     fun doneShowingSnackbar() {
         _showSnackbarEvent.value = false
     }
-
     /**
      * If this is non-null, immediately navigate to [SleepQualityFragment] and call [doneNavigating]
      */
-    val navigateToSleepQuality: LiveData<SleepNight>
+    val navigateToSleepQuality: LiveData<SleepNight?>
         get() = _navigateToSleepQuality
 
     /**

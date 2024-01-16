@@ -17,40 +17,22 @@
 package com.example.android.trackmysleepquality.sleeptracker
 
 import android.app.Application
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import com.example.android.trackmysleepquality.database.SleepDatabaseDao
 import com.example.android.trackmysleepquality.database.SleepNight
 import com.example.android.trackmysleepquality.formatNights
 import kotlinx.coroutines.*
-import androidx.lifecycle.viewModelScope
 
 /**
  * ViewModel for SleepTrackerFragment.
  */
 class SleepTrackerViewModel(
-        val database: SleepDatabaseDao,
-        application: Application) : AndroidViewModel(application) {
-
-    /**
-     * viewModelJob allows us to cancel all coroutines started by this ViewModel.
-
-    private var viewModelJob = Job()
-
-    /**
-     * A [CoroutineScope] keeps track of all coroutines started by this ViewModel.
-     *
-     * Because we pass it [viewModelJob], any coroutine started in this uiScope can be cancelled
-     * by calling `viewModelJob.cancel()`
-     *
-     * By default, all coroutines started in uiScope will launch in [Dispatchers.Main] which is
-     * the main thread on Android. This is a sensible default because most coroutines started by
-     * a [ViewModel] update the UI after performing some processing.
-     */
-    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-     */
+    val database: SleepDatabaseDao,
+    application: Application) : AndroidViewModel(application) {
 
 
     private var tonight = MutableLiveData<SleepNight?>()
@@ -60,29 +42,29 @@ class SleepTrackerViewModel(
     /**
      * Converted nights to Spanned for displaying.
      */
-    val nightsString = Transformations.map(nights) { nights ->
+    val nightsString = nights.map { nights ->
         formatNights(nights, application.resources)
     }
 
     /**
      * If tonight has not been set, then the START button should be visible.
      */
-    val startButtonVisible = Transformations.map(tonight) {
+    val startButtonVisible = tonight.map {
         null == it
     }
 
     /**
      * If tonight has been set, then the STOP button should be visible.
      */
-    val stopButtonVisible = Transformations.map(tonight) {
+    val stopButtonVisible = tonight.map {
         null != it
     }
 
     /**
      * If there are any nights in the database, show the CLEAR button.
      */
-    val clearButtonVisible = Transformations.map(nights) {
-        it?.isNotEmpty()
+    val clearButtonVisible = nights.map {
+        it.isNotEmpty()
     }
 
     /**
@@ -104,7 +86,7 @@ class SleepTrackerViewModel(
      * This is private because we don't want to expose setting this value to the Fragment.
      */
 
-    private val _navigateToSleepQuality = MutableLiveData<SleepNight>()
+    private val _navigateToSleepQuality = MutableLiveData<SleepNight?>()
     /**
      * Call this immediately after calling `show()` on a toast.
      *
@@ -115,11 +97,10 @@ class SleepTrackerViewModel(
     fun doneShowingSnackbar() {
         _showSnackbarEvent.value = false
     }
-
     /**
      * If this is non-null, immediately navigate to [SleepQualityFragment] and call [doneNavigating]
      */
-    val navigateToSleepQuality: LiveData<SleepNight>
+    val navigateToSleepQuality: LiveData<SleepNight?>
         get() = _navigateToSleepQuality
 
     /**
@@ -130,18 +111,6 @@ class SleepTrackerViewModel(
      */
     fun doneNavigating() {
         _navigateToSleepQuality.value = null
-    }
-
-    private val _navigateToSleepDataQuality = MutableLiveData<Long>()
-    val navigateToSleepDataQuality
-        get() = _navigateToSleepDataQuality
-
-    fun onSleepNightClicked(id: Long) {
-        _navigateToSleepDataQuality.value = id
-    }
-
-    fun onSleepDataQualityNavigated() {
-        _navigateToSleepDataQuality.value = null
     }
 
     init {
@@ -162,31 +131,23 @@ class SleepTrackerViewModel(
      *  recording.
      */
     private suspend fun getTonightFromDatabase(): SleepNight? {
-        //return withContext(Dispatchers.IO) {
-            var night = database.getTonight()
-            if (night?.endTimeMilli != night?.startTimeMilli) {
-                night = null
-            }
-            return night
-        //}
+        var night = database.getTonight()
+        if (night?.endTimeMilli != night?.startTimeMilli) {
+            night = null
+        }
+        return night
     }
 
     private suspend fun clear() {
-        withContext(Dispatchers.IO) {
-            database.clear()
-        }
+        database.clear()
     }
 
     private suspend fun update(night: SleepNight) {
-        withContext(Dispatchers.IO) {
-            database.update(night)
-        }
+        database.update(night)
     }
 
     private suspend fun insert(night: SleepNight) {
-        withContext(Dispatchers.IO) {
-            database.insert(night)
-        }
+        database.insert(night)
     }
 
     /**
